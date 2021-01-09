@@ -3,30 +3,34 @@ services:
   airflow-backend:
     image: mysql:latest
     command: --default-authentication-plugin=mysql_native_password
-    networks: 
+    networks:
       - airflow-backend
     volumes:
-      - "airflow-backend:/var/lib/mysql"
+      - ./data/mysql:/var/lib/mysql
+      # - "airflow-backend:/var/lib/mysql"
     env_file:
       - mysql.env
-    
+    # user: "1000:1000"
+
   airflow-engine:
     build: ./airflow-engine
-    depends_on: 
+    depends_on:
       - airflow-backend
     init: true
-    networks: 
+    networks:
       - airflow-backend
     volumes:
-      - "airflow-engine:/root/airflow/"
+      - ./data/airflow:/root/airflow/
+      # - "airflow-engine:/root/airflow/"
     ports:
       - "8080:8080"
     env_file:
       - mysql.env
+    # user: "1000:1000"
 
 networks:
   airflow-backend:
 
-volumes:
-  airflow-engine:
-  airflow-backend:
+# volumes:
+#   airflow-engine:
+#   airflow-backend:

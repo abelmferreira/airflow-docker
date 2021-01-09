@@ -1,7 +1,7 @@
 INIT_FILE=.airflowinitialized
 if [ ! -f "$INIT_FILE" ]; then
     # Create all Airflow configuration files
-    airflow initdb
+    airflow db init
     rm /root/airflow/airflow.db
 
     # Secure the storage of connections' passwords
@@ -9,14 +9,14 @@ if [ ! -f "$INIT_FILE" ]; then
 
     # Wait until the DB is ready
     apt update && apt install -y netcat
-    while ! nc -z airflow-backend 3306; do   
+    while ! nc -z airflow-backend 3306; do
         sleep 1
     done
     apt remove -y netcat
 
     # Setup the DB
     python mysqlconnect.py
-    airflow initdb
+    airflow db init
 
     # Allow XComs to store objects bigger than 65KB
     apt update && apt install -y default-mysql-client
